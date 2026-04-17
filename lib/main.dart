@@ -11,7 +11,6 @@ void main() async {
 
   final pref = await SharedPreferences.getInstance();
 
-
   String? username = pref.getString('username');
 
   runApp(MainApp(username: username));
@@ -27,10 +26,16 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        switchTheme: SwitchThemeData(
+
+          
+        ),
         appBarTheme: AppBarTheme(
+          
           backgroundColor: Color(0xFF181818),
           titleTextStyle: TextStyle(color: Color(0xFFFFFCFC), fontSize: 20),
         ),
+
         useMaterial3: true,
         colorScheme: const ColorScheme.dark(
           primary: Color(0xff15B86C),
@@ -43,3 +48,6 @@ class MainApp extends StatelessWidget {
     );
   }
 }
+
+
+// mohammad awd help his bro
