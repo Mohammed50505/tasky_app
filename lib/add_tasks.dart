@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable, use_build_context_synchronously, avoid_print
+// ignore_for_file: unused_local_variable, use_build_context_synchronously, avoid_print, deprecated_member_use
 
 import 'dart:convert';
 
@@ -142,6 +142,7 @@ class _AddTasksState extends State<AddTasks> {
                         },
 
                         activeTrackColor: Color(0xff15B86C),
+                          activeColor: Colors.white, 
                       ),
                     ],
                   ),

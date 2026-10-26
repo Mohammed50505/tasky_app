@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, avoid_print, unnecessary_brace_in_string_interps
+// ignore_for_file: non_constant_identifier_names, avoid_print, unnecessary_brace_in_string_interps, avoid_unnecessary_containers, strict_top_level_inference
 
 import 'dart:convert';
 
@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tasks_app/add_tasks.dart';
 import 'package:tasks_app/task_models.dart';
+import 'package:tasks_app/widgets/achieved_Tasks_widget.dart';
+import 'package:tasks_app/widgets/high_priority_task_widget.dart';
 import 'package:tasks_app/widgets/tasks_list_widget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,11 +21,15 @@ class _HomeScreenState extends State<HomeScreen> {
   // bool isDone = true;
   String? username;
   List<TaskModel> tasks = [];
+  int totalTask = 0;
+  int totalDoneTask = 0;
+  double percent = 0;
   @override
   void initState() {
     super.initState();
     _LodeUserName();
     _Lodatask();
+    _calculatePercent();
   }
 
   void _Lodatask() async {
@@ -39,10 +45,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
       setState(() {
         this.tasks = tasks;
+        _calculatePercent();
       });
-
-      
     }
+  }
+
+  _calculatePercent() {
+    totalTask = tasks.length;
+    totalDoneTask = tasks.where((e) => e.isDone).length;
+    percent = totalTask == 0 ? 0 : totalDoneTask / totalTask;
+  }
+
+  _doneTask(bool? value, int? index) async {
+    setState(() {
+      tasks[index!].isDone = value ?? false;
+      _calculatePercent();
+    });
+
+    final pref = await SharedPreferences.getInstance();
+    final uptateTask = tasks.map((e) => e.toMap()).toList();
+    pref.setString("tasks", jsonEncode(uptateTask));
   }
 
   void _LodeUserName() async {
@@ -141,6 +163,21 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 12),
 
+              AchievedTasksWidget(
+                totalTask: totalTask,
+                totalDoneTask: totalDoneTask,
+                percent: percent,
+              ),
+              const SizedBox(height: 5),
+              HigPriorityTaskWidget(
+                tasks: tasks,
+                onTap: (bool? value, int? index) {
+                  _doneTask(value, index);
+                },
+                onReturn: () => _Lodatask(),
+              ),
+              /////////////////////////////////
+              const SizedBox(height: 8),
               Text(
                 "MyTasks",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
@@ -149,14 +186,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: tasks_list_widget(
                   emptymessage: "No Data",
                   Tasks: tasks,
-                  onTap: (bool? value, int? index) async {
-                    setState(() {
-                      tasks[index!].isDone = value ?? false;
-                    });
-
-                    final pref = await SharedPreferences.getInstance();
-                    final uptateTask = tasks.map((e) => e.toMap()).toList();
-                    pref.setString("tasks", jsonEncode(uptateTask));
+                  onTap: (bool? value, int? index) {
+                    _doneTask(value, index);
                   },
                 ),
               ),

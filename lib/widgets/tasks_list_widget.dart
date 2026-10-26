@@ -68,7 +68,9 @@ class tasks_list_widget extends StatelessWidget {
                                     ? TextDecoration.lineThrough
                                     : TextDecoration.none,
                                 decorationColor: Color(0xFFA0A0A0),
+                                
                               ),
+                              
                             ),
                             if (Tasks[index].taskDescription.isNotEmpty)
                               Text(
